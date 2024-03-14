@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+
+typedef struct {
+    char question[100];
+    char options[4][50];
+    int correct_option;
+} Question;
+
+void displayQuestion(Question q) {
+    printf("%s\n", q.question);
+    for (int i = 0; i < 4; i++) {
+        printf("%d. %s\n", i + 1, q.options[i]);
+    }
+}
+
+int checkAnswer(int selected_option, int correct_option) {
+    return selected_option == correct_option;
+}
+
+void shuffleQuestions(Question *questions, int num_questions) {
+    srand(time(NULL));
+    for (int i = 0; i < num_questions; i++) {
+        int j = rand() % num_questions;
+        Question temp = questions[i];
+        questions[i] = questions[j];
+        questions[j] = temp;
+    }
+}
+
+int main() {
+    int score = 0;
+
+    Question questions[] = {
+        {"What is the capital of France?",
+         {"London", "Paris", "Berlin", "Rome"},
+         2},
+        {"What is 2 + 2?",
+         {"3", "4", "5", "6"},
+         2},
+        {"Which planet is known as the Red Planet?",
+         {"Venus", "Mars", "Jupiter", "Saturn"},
+         2}
+    };
+
+    int num_questions = sizeof(questions) / sizeof(questions[0]);
+
+    shuffleQuestions(questions, num_questions);
+
+    for (int i = 0; i < num_questions; i++) {
+        printf("Question %d/%d:\n", i + 1, num_questions);
+        displayQuestion(questions[i]);
+        printf("Enter your answer (1-4): ");
+
+        int selected_option;
+        scanf("%d", &selected_option);
+
+        if (checkAnswer(selected_option, questions[i].correct_option)) {
+            printf("Correct!\n");
+            score++;
+        } else {
+            printf("Incorrect. The correct answer is: %d. %s\n", 
+                   questions[i].correct_option, 
+                   questions[i].options[questions[i].correct_option - 1]);
+        }
+
+        printf("\n");
+    }
+
+    printf("Quiz completed!\n");
+    printf("Your score: %d/%d\n", score, num_questions);
+
+    return 0;
+}
