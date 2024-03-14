@@ -1,0 +1,112 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+// Function 
+void initializeBoard(char board[3][3]);
+void displayBoard(char board[3][3]);
+bool isGameOver(char board[3][3]);
+bool checkWin(char board[3][3], char symbol);
+bool checkDraw(char board[3][3]);
+
+int main() {
+    char board[3][3];
+    char currentPlayer = 'X';
+    int row, col;
+
+    initializeBoard(board);
+
+    printf("Welcome to Tic-Tac-Toe!\n");
+    printf("Player X - Player O \n\n");
+
+    // Game loop
+    while (!isGameOver(board)) {
+        displayBoard(board);
+
+        // Player's move
+        printf("Player %c, enter your move (row and column): ", currentPlayer);
+        scanf("%d %d", &row, &col);
+
+        // Check if move is valid
+        if (row < 0 || row > 2 || col < 0 || col > 2 || board[row][col] != ' ') {
+            printf("Invalid move! Try again.\n");
+            continue;
+        }
+
+        // Update the board with the player's move
+        board[row][col] = currentPlayer;
+
+        // Switch to the other player
+        currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
+    }
+
+    // Display the final board
+    displayBoard(board);
+
+    // Check game result
+    if (checkWin(board, 'X')) {
+        printf("Player X wins!\n");
+    } else if (checkWin(board, 'O')) {
+        printf("Player O wins!\n");
+    } else {
+        printf("It's a draw!\n");
+    }
+
+    return 0;
+}
+
+// Function to initialize the board with empty spaces
+void initializeBoard(char board[3][3]) {
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            board[i][j] = ' ';
+        }
+    }
+}
+
+// Function to display the current state of the board
+void displayBoard(char board[3][3]) {
+    printf("\n  0 1 2\n");
+    for (int i = 0; i < 3; i++) {
+        printf("%d ", i);
+        for (int j = 0; j < 3; j++) {
+            printf("%c ", board[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+// Function to check if the game is over
+bool isGameOver(char board[3][3]) {
+    return checkWin(board, 'X') || checkWin(board, 'O') || checkDraw(board);
+}
+
+// Function to check if a player has won
+bool checkWin(char board[3][3], char symbol) {
+    // Check rows and columns
+    for (int i = 0; i < 3; i++) {
+        if ((board[i][0] == symbol && board[i][1] == symbol && board[i][2] == symbol) ||
+            (board[0][i] == symbol && board[1][i] == symbol && board[2][i] == symbol)) {
+            return true;
+        }
+    }
+
+    // Check diagonals
+    if ((board[0][0] == symbol && board[1][1] == symbol && board[2][2] == symbol) ||
+        (board[0][2] == symbol && board[1][1] == symbol && board[2][0] == symbol)) {
+        return true;
+    }
+
+    return false;
+}
+
+// Function to check if the game is a draw
+bool checkDraw(char board[3][3]) {
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            if (board[i][j] == ' ') {
+                return false; // If there is an empty space, game is not a draw
+            }
+        }
+    }
+    return true; // If no empty space, game is a draw
+}
